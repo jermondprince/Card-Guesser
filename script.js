@@ -1,11 +1,16 @@
-// GET a partial deck of Cards from API to use
-function getCards() {
-  fetch("http://deckofcardsapi.com/api/deck/new/", {
+// use GET method with a more simplified way and create less lines of code
+function apiGet(path) {
+  return fetch(`http://deckofcardsapi.com/api/deck/${path}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-  })
+  });
+}
+
+// GET a partial deck of Cards from API to use
+function getCards() {
+  apiGet(`new/`)
     .then(function (response) {
       return response.json();
     })
@@ -16,12 +21,7 @@ function getCards() {
 
       // Shuffle Cards
       function shuffleCards() {
-        fetch(`http://deckofcardsapi.com/api/deck/${deckID}/shuffle/`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        apiGet(`${deckID}/shuffle/`)
           .then(function (response) {
             return response.json();
           })
@@ -29,103 +29,40 @@ function getCards() {
             console.log(cards);
           });
       }
+      shuffleCards();
 
       // Draw the cards from the deck created
       function drawCards() {
-        fetch(`http://deckofcardsapi.com/api/deck/${deckID}/draw/?count=21`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        apiGet(`${deckID}/draw/?count=21`)
           .then(function (response) {
             return response.json();
           })
           .then(function (deck) {
             console.log(deck);
-            // Gets the image source from API
-            let images = [
-              deck.cards[0].image,
-              deck.cards[1].image,
-              deck.cards[2].image,
-              deck.cards[3].image,
-              deck.cards[4].image,
-              deck.cards[5].image,
-              deck.cards[6].image,
-              deck.cards[7].image,
-              deck.cards[8].image,
-              deck.cards[9].image,
-              deck.cards[10].image,
-              deck.cards[11].image,
-              deck.cards[12].image,
-              deck.cards[13].image,
-              deck.cards[14].image,
-              deck.cards[15].image,
-              deck.cards[16].image,
-              deck.cards[17].image,
-              deck.cards[18].image,
-              deck.cards[19].image,
-              deck.cards[20].image,
-            ];
-            // Gets code for cards from API
-            let cardCode = [
-              deck.cards[0].code,
-              deck.cards[1].code,
-              deck.cards[2].code,
-              deck.cards[3].code,
-              deck.cards[4].code,
-              deck.cards[5].code,
-              deck.cards[6].code,
-              deck.cards[7].code,
-              deck.cards[8].code,
-              deck.cards[9].code,
-              deck.cards[10].code,
-              deck.cards[11].code,
-              deck.cards[12].code,
-              deck.cards[13].code,
-              deck.cards[14].code,
-              deck.cards[15].code,
-              deck.cards[16].code,
-              deck.cards[17].code,
-              deck.cards[18].code,
-              deck.cards[19].code,
-              deck.cards[20].code,
-            ];
+
+            let images = [];
+            let cardCode = [];
+
+            // Gets the image source from API and pushes to empty images array
+            for (let index = 0; index < deck.cards.length; index++) {
+              images.push(deck.cards[index].image);
+            }
+            // Gets code for cards from API and pushes to empty cardCode array
+            for (let index = 0; index < deck.cards.length; index++) {
+              cardCode.push(deck.cards[index].code);
+            }
 
             // Displays the cards image
-            document.getElementById("img1").src = images[0];
-            document.getElementById("img2").src = images[1];
-            document.getElementById("img3").src = images[2];
-            document.getElementById("img4").src = images[3];
-            document.getElementById("img5").src = images[4];
-            document.getElementById("img6").src = images[5];
-            document.getElementById("img7").src = images[6];
-            document.getElementById("img8").src = images[7];
-            document.getElementById("img9").src = images[8];
-            document.getElementById("img10").src = images[9];
-            document.getElementById("img11").src = images[10];
-            document.getElementById("img12").src = images[11];
-            document.getElementById("img13").src = images[12];
-            document.getElementById("img14").src = images[13];
-            document.getElementById("img15").src = images[14];
-            document.getElementById("img16").src = images[15];
-            document.getElementById("img17").src = images[16];
-            document.getElementById("img18").src = images[17];
-            document.getElementById("img19").src = images[18];
-            document.getElementById("img20").src = images[19];
-            document.getElementById("img21").src = images[20];
+            function cardImgSource() {
+              for (let index = 1; index <= images.length; index++) {
+                document.getElementById(`img${index}`).src = images[index - 1];
+              }
+            }
+            cardImgSource();
 
             // Adds drawn cards to a pile
             function drawnCards() {
-              fetch(
-                `http://deckofcardsapi.com/api/deck/${deckID}/pile/partial/add/?cards=${cardCode}`,
-                {
-                  method: "GET",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              )
+              apiGet(`${deckID}/pile/partial/add/?cards=${cardCode}`)
                 .then(function (response) {
                   return response.json();
                 })
@@ -137,15 +74,7 @@ function getCards() {
 
             // List drawn cards in the pile to use
             function listCards() {
-              fetch(
-                `http://deckofcardsapi.com/api/deck/${deckID}/pile/partial/list`,
-                {
-                  method: "GET",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                }
-              )
+              apiGet(`${deckID}/pile/partial/list`)
                 .then(function (response) {
                   return response.json();
                 })
@@ -444,572 +373,138 @@ function getCards() {
               document.getElementById("img21").src = images[20];
             }
 
-            // Card guesses
+            // Card Guesses
+            function cardGuessTen() {
+              let imgTen = document.getElementById("img10").src;
+              let guess = imgTen;
+
+              for (let index = 1; index <= 21; index++) {
+                document.getElementById(`img${index}`).src = guess;
+              }
+            }
+
+            function cardGuessEleven() {
+              let imgTen = document.getElementById("img11").src;
+              let guess = imgTen;
+
+              for (let index = 1; index <= 21; index++) {
+                document.getElementById(`img${index}`).src = guess;
+              }
+            }
+
+            function cardGuessTwelve() {
+              let imgTen = document.getElementById("img12").src;
+              let guess = imgTen;
+
+              for (let index = 1; index <= 21; index++) {
+                document.getElementById(`img${index}`).src = guess;
+              }
+            }
+
+            // Card sequences
             function oneTwoOne() {
               columnTwo();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function oneTwoTwo() {
-              columnTwoAgain();
-              let guess = document.getElementById("img2").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              columnTwo();
+              cardGuessEleven();
             }
 
             function oneTwoThree() {
               columnTwo();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function oneOneTwo() {
-              columnTwo();
-              let guess = document.getElementById("img4").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              columnOneAgain();
+              cardGuessEleven();
             }
 
             function oneOneThree() {
               columnOneAgain();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function oneThreeOne() {
               columnThree();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function oneThreeTwo() {
               columnThree();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function twoOneTwo() {
               anotherColumnOne();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function twoOneThree() {
               anotherColumnOne();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function twoTwoOne() {
               columnTwoAgain();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function twoTwoTwo() {
               columnTwoAgain();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function twoTwoThree() {
               columnTwoAgain();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function twoThreeOne() {
               anotherColumnThree();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function twoThreeTwo() {
               anotherColumnThree();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function threeOneTwo() {
               newColumnOne();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function threeOneThree() {
               newColumnOne();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function threeTwoOne() {
               newColumnTwo();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function threeTwoTwo() {
               newColumnTwo();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             function threeTwoThree() {
               newColumnTwo();
-              let guess = document.getElementById("img12").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTwelve();
             }
 
             function threeThreeOne() {
               columnThreeAgain();
-              let guess = document.getElementById("img10").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessTen();
             }
 
             function threeThreeTwo() {
               columnThreeAgain();
-              let guess = document.getElementById("img11").src;
-
-              document.getElementById("img1").src = guess;
-              document.getElementById("img2").src = guess;
-              document.getElementById("img3").src = guess;
-              document.getElementById("img4").src = guess;
-              document.getElementById("img5").src = guess;
-              document.getElementById("img6").src = guess;
-              document.getElementById("img7").src = guess;
-              document.getElementById("img8").src = guess;
-              document.getElementById("img9").src = guess;
-              document.getElementById("img10").src = guess;
-              document.getElementById("img11").src = guess;
-              document.getElementById("img12").src = guess;
-              document.getElementById("img13").src = guess;
-              document.getElementById("img14").src = guess;
-              document.getElementById("img15").src = guess;
-              document.getElementById("img16").src = guess;
-              document.getElementById("img17").src = guess;
-              document.getElementById("img18").src = guess;
-              document.getElementById("img19").src = guess;
-              document.getElementById("img20").src = guess;
-              document.getElementById("img21").src = guess;
+              cardGuessEleven();
             }
 
             const buttonOne = document.getElementById("buttonOne");
@@ -1206,8 +701,6 @@ function getCards() {
             });
           });
       }
-
-      shuffleCards();
       drawCards();
     });
 }
