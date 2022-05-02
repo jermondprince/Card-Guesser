@@ -1,0 +1,62 @@
+h1 {
+  color: #fb4b4e;
+  font-size: 64px;
+}
+
+.background {
+  background-color: #eeeeee;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 0 40px rgba(0, 0, 0, 0.322);
+          box-shadow: 0 0 40px rgba(0, 0, 0, 0.322);
+}
+
+img {
+  -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.322);
+          box-shadow: 0 0 15px rgba(0, 0, 0, 0.322);
+}
+
+.info {
+  color: #3e65ff;
+}
+
+.col-3 {
+  text-align: center;
+}
+
+.col-6 {
+  text-align: center;
+}
+
+img {
+  width: 50%;
+}
+
+.btn {
+  width: 105px;
+}
+
+.title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+}
+
+.title-1 {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+/*# sourceMappingURL=styles.css.map */
