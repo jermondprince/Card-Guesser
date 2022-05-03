@@ -1,6 +1,6 @@
 // use GET method with a more simplified way and create less lines of code
 function apiGet(path) {
-  return fetch(`http://deckofcardsapi.com/api/deck/${path}`, {
+  return fetch(`https://deckofcardsapi.com/api/deck/${path}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
