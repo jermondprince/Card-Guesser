@@ -15,7 +15,12 @@ img {
           box-shadow: 0 0 15px rgba(0, 0, 0, 0.322);
 }
 
-.info {
+.hide {
+  display: none;
+}
+
+.info,
+.blue {
   color: #3e65ff;
 }
 

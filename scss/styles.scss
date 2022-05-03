@@ -15,7 +15,11 @@ img {
   box-shadow: $lightShadow;
 }
 
-.info {
+.hide {
+  display: none;
+}
+
+p#info {
   color: $blue;
 }
 
